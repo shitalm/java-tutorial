@@ -120,3 +120,41 @@ Note: This is not a proper directory structure as source code and generated clas
 	git checkout basic-http
 	
 	```
+
+# Make multi-threaded HTTP server
+
+1. Code we have written so far handles one request at a time. Till one request finishes processing, second request will not be handled. 
+
+1. Add following code in handle() method of HelloWorldHandler in the beginning:
+	```java
+	try {
+    	Thread.sleep(30000);
+    } catch(InterruptedException ex) {}
+	
+	```
+	So we will sleep for 30 seconds before we start processing the request.
+
+1. Change response to include date as follows:
+	```java
+	String response = "Hello World!" + new Date();
+	
+	```
+
+1. Now compile and run the code.
+
+1. Browse to http://localhost:8080/hello from two different tabs of browser. You will see that first tab responds after 30 seconds and second tab responds after 60 seconds. This happens because second request processing didn't start till first one was completed. If processing for both requests started at the same time, both would have responded after 30 seconds.
+
+1. Now add one line before server.start() in main method
+	```java
+	server.setExecutor(Executors.newCachedThreadPool());
+	```
+
+1. Now compile and run the code.
+
+1. Browse to http://localhost:8080/hello from two different tabs of browser. You will see both tabs respond in 30 seconds. This is because our HTTP server started processing both requests simultaneously (or concurrently).
+
+1. If you want to look at the complete code at this point in time, do:
+	```
+	git checkout multi-http
+	
+	```
